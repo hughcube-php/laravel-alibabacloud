@@ -9,7 +9,7 @@
 return [
     "default" => "default",
     "clients" => [
-        "accessKeyId" => "************",
+        "accessKey" => "************",
         "accessKeySecret" => "************",
         "regionId" => "************",
     ]

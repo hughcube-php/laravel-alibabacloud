@@ -95,9 +95,9 @@ class Manager
 
         return $this->makeClient(
             [
-                "accessKeyId" => getenv($idName),
-                "accessKeySecret" => getenv($secretName),
-                "regionId" => getenv($regionName),
+                "accessKey" => env($idName),
+                "accessKeySecret" => env($secretName),
+                "regionId" => env($regionName),
             ]
         );
     }

@@ -49,7 +49,7 @@ class Client
             $this->name = md5(serialize([__METHOD__, $this->config, rand(1, 99999999), microtime()]));
 
             $this->client = AlibabaCloud::accessKeyClient(
-                $this->config["accessKeyId"],
+                $this->config["accessKey"],
                 $this->config["accessKeySecret"]
             );
             if (!empty($this->config["regionId"])) {
