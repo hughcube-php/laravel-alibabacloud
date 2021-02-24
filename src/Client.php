@@ -11,6 +11,7 @@ namespace HughCube\Laravel\AlibabaCloud;
 use AlibabaCloud\Client\AlibabaCloud;
 use AlibabaCloud\Client\Clients\AccessKeyClient;
 use AlibabaCloud\Client\Resolver\Rpc as AlibabaCloudRpc;
+use Illuminate\Support\Arr;
 
 class Client
 {
@@ -89,5 +90,37 @@ class Client
     public function request(AlibabaCloudRpc $request)
     {
         return $this->withClient($request)->request();
+    }
+
+    /**
+     * @return string
+     */
+    public function getAccessKey()
+    {
+        return Arr::get($this->config, "accessKey");
+    }
+
+    /**
+     * @return string
+     */
+    public function getAccessKeySecret()
+    {
+        return Arr::get($this->config, "accessKeySecret");
+    }
+
+    /**
+     * @return string
+     */
+    public function getRegionId()
+    {
+        return Arr::get($this->config, "regionId");
+    }
+
+    /**
+     * @return string
+     */
+    public function getAccountId()
+    {
+        return Arr::get($this->config, "accountId");
     }
 }
