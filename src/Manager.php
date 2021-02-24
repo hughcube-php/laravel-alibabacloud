@@ -46,7 +46,7 @@ class Manager
      */
     public function client($name = null)
     {
-        $name = null == $name ? 'default' : $name;
+        $name = null == $name ? $this->getDefaultClient() : $name;
 
         if (isset($this->clients[$name])) {
             return $this->clients[$name];
@@ -107,9 +107,9 @@ class Manager
      *
      * @return string
      */
-    public function getDefaultConnection()
+    public function getDefaultClient()
     {
-        return Arr::get($this->config, 'alibabaCloud.default', 'default');
+        return Arr::get($this->config, 'default', 'default');
     }
 
     /**
@@ -123,7 +123,7 @@ class Manager
     protected function configuration($name)
     {
         $name = $name ?: $this->getDefaultConnection();
-        $clients = Arr::get($this->config, 'alibabaCloud.clients');
+        $clients = Arr::get($this->config, 'clients');
 
         if (is_null($config = Arr::get($clients, $name))) {
             throw new \InvalidArgumentException("AlibabaCloud client [{$name}] not configured.");
