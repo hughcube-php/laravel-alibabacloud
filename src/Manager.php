@@ -103,7 +103,7 @@ class Manager
     }
 
     /**
-     * Get the default connection name.
+     * Get the default client name.
      *
      * @return string
      */
@@ -113,7 +113,7 @@ class Manager
     }
 
     /**
-     * Get the configuration for a connection.
+     * Get the configuration for a client.
      *
      * @param string $name
      * @return array
@@ -122,7 +122,7 @@ class Manager
      */
     protected function configuration($name)
     {
-        $name = $name ?: $this->getDefaultConnection();
+        $name = $name ?: $this->getDefaultClient();
         $clients = Arr::get($this->config, 'clients');
 
         if (is_null($config = Arr::get($clients, $name))) {
