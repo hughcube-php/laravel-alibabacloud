@@ -16,13 +16,14 @@ use Illuminate\Support\Facades\Facade as IlluminateFacade;
  * @package HughCube\Laravel\AlibabaCloud
  * @method static Client client(string $name = null)
  * @method static Client makeClient(array $config)
- * @method static Client makeMakeClientFromEnv(string $idName = null, string $secretName = null, string $regionName = null)
+ * @method static Client makeClientFromEnv(string $idName = null, string $secretName = null, string $regionName = null, string $accountName = null)
  */
 class AlibabaCloud extends IlluminateFacade
 {
     const KEY_ID_ENV_NAME = "ALIYUN_ACCESS_KEY";
     const KEY_SECRET_ENV_NAME = "ALIYUN_ACCESS_KEY_SECRET";
     const REGION_ENV_NAME = "ALIYUN_REGION";
+    const ACCOUNT_ENV_NAME = "ALIYUN_ACCOUNT";
 
     /**
      * @var AlibabaCloudSdk

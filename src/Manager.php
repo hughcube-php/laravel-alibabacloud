@@ -85,19 +85,26 @@ class Manager
      * @param string|null $idName
      * @param string|null $secretName
      * @param string|null $regionName
+     * @param string|null $accountName
      * @return Client
      */
-    public function makeMakeClientFromEnv($idName = null, $secretName = null, $regionName = null)
-    {
+    public function makeClientFromEnv(
+        string $idName = null,
+        string $secretName = null,
+        string $regionName = null,
+        string $accountName = null
+    ) {
         $idName = empty($idName) ? AlibabaCloud::KEY_ID_ENV_NAME : $idName;
         $secretName = empty($secretName) ? AlibabaCloud::KEY_SECRET_ENV_NAME : $secretName;
         $regionName = empty($regionName) ? AlibabaCloud::REGION_ENV_NAME : $regionName;
+        $accountName = empty($accountName) ? AlibabaCloud::ACCOUNT_ENV_NAME : $accountName;
 
         return $this->makeClient(
             [
                 "accessKey" => env($idName),
                 "accessKeySecret" => env($secretName),
                 "regionId" => env($regionName),
+                "accountId" => env($accountName),
             ]
         );
     }
