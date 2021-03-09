@@ -15,6 +15,8 @@ use Illuminate\Support\Arr;
 
 class Client
 {
+    private static $clientCount = 0;
+
     /**
      * @var string Client对应的名称
      */
@@ -47,12 +49,9 @@ class Client
     public function getName(): string
     {
         if (empty($this->name)) {
-            $this->name = md5(serialize([__METHOD__, $this->config, rand(1, 99999999), microtime()]));
+            $this->name = md5(serialize([__METHOD__, $this->config, microtime(), ++static::$clientCount]));
+            $this->client = AlibabaCloud::accessKeyClient($this->config["accessKey"], $this->config["accessKeySecret"]);
 
-            $this->client = AlibabaCloud::accessKeyClient(
-                $this->config["accessKey"],
-                $this->config["accessKeySecret"]
-            );
             if (!empty($this->config["regionId"])) {
                 $this->client->regionId($this->config["regionId"]);
             }
@@ -122,5 +121,19 @@ class Client
     public function getAccountId()
     {
         return Arr::get($this->config, "accountId");
+    }
+
+    /**
+     * 变更所在地区, 主要在账号密码不变更, 切换地区使用
+     *
+     * @param string $regionId
+     * @return static
+     */
+    public function withRegionId($regionId)
+    {
+        $config = $this->config;
+        $config["regionId"] = $regionId;
+
+        return new static($config);
     }
 }
