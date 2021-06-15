@@ -11,6 +11,8 @@ namespace HughCube\Laravel\AlibabaCloud\Tests;
 use HughCube\Laravel\AlibabaCloud\AlibabaCloud;
 use HughCube\Laravel\AlibabaCloud\Client;
 use Illuminate\Support\Arr;
+use AlibabaCloud\Client\AlibabaCloud as AliYunAlibabaCloud;
+use Closure;
 
 class ClientTest extends TestCase
 {
@@ -47,5 +49,10 @@ class ClientTest extends TestCase
         $this->assertSame(Arr::get($config, 'AccountId'), $client->getAccountId());
         $this->assertSame(Arr::get($config, 'Options'), $client->getOptions());
         $this->assertNotEmpty($client->getName());
+
+        $this->assertSame(AliYunAlibabaCloud::get($client->getName()), $client->getClient());
+
+        $client->asDefault();
+        $this->assertSame(AliYunAlibabaCloud::getDefaultClient(), $client->getClient());
     }
 }

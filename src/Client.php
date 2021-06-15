@@ -56,6 +56,16 @@ class Client
 
     /**
      * @return AccessKeyClient
+     */
+    public function getClient()
+    {
+        $this->getName();
+
+        return $this->client;
+    }
+
+    /**
+     * @return AccessKeyClient
      * @throws \AlibabaCloud\Client\Exception\ClientException
      */
     protected function createAlibabaCloudClient()
