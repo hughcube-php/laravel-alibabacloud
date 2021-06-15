@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2021/2/23
- * Time: 11:21
+ * Time: 11:21.
  */
 
 namespace HughCube\Laravel\AlibabaCloud;
@@ -46,7 +46,7 @@ class Manager
     public function client($name = null)
     {
         $name = empty($name) ? $this->getDefaultClient() : $name;
-        if (!isset($this->clients[$name])) {
+        if (! isset($this->clients[$name])) {
             $this->clients[$name] = $this->resolve($name);
         }
 
@@ -59,7 +59,6 @@ class Manager
      * @param string|null $name
      *
      * @return Client
-     *
      */
     protected function resolve($name = null)
     {
@@ -78,7 +77,7 @@ class Manager
     }
 
     /**
-     * Make the AlibabaCloud client instance from env
+     * Make the AlibabaCloud client instance from env.
      *
      * @param string|null $idName
      * @param string|null $secretName
@@ -98,10 +97,10 @@ class Manager
         $accountName = empty($accountName) ? AlibabaCloud::ACCOUNT_ID_ENV_NAME : $accountName;
 
         return $this->makeClient([
-            "AccessKeyID" => env($idName),
-            "AccessKeySecret" => env($secretName),
-            "RegionId" => env($regionName),
-            "AccountId" => env($accountName),
+            'AccessKeyID' => env($idName),
+            'AccessKeySecret' => env($secretName),
+            'RegionId' => env($regionName),
+            'AccountId' => env($accountName),
         ]);
     }
 

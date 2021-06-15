@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2021/2/23
- * Time: 11:20
+ * Time: 11:20.
  */
 
 namespace HughCube\Laravel\AlibabaCloud;
@@ -74,11 +74,12 @@ class Client
     protected function randomName()
     {
         $string = serialize([__METHOD__, $this->config, microtime(), ++self::$clientIndex, random_int(0, 9999999999)]);
+
         return sprintf('%s-%s', md5($string), crc32($string));
     }
 
     /**
-     * 把当前实例设置为默认实例
+     * 把当前实例设置为默认实例.
      */
     public function asDefault()
     {
@@ -86,7 +87,7 @@ class Client
     }
 
     /**
-     * 给request添加上client
+     * 给request添加上client.
      *
      * @param AlibabaCloudRpc $request
      * @return AlibabaCloudRpc
@@ -158,7 +159,7 @@ class Client
     }
 
     /**
-     * 变更所在地区
+     * 变更所在地区.
      *
      * @param string $regionId
      * @return static
@@ -169,7 +170,7 @@ class Client
     }
 
     /**
-     * 变更Options
+     * 变更Options.
      *
      * @param array $options
      * @return static

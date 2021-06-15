@@ -44,7 +44,7 @@ class TestCase extends OrchestraTestCase
     {
         parent::getEnvironmentSetUp($app);
 
-        $app['config']->set('alibabaCloud', (require __DIR__ . '/config//alibabaCloud.php'));
+        $app['config']->set('alibabaCloud', (require __DIR__.'/config//alibabaCloud.php'));
 
         foreach (
             [

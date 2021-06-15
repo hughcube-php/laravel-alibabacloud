@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2021/2/23
- * Time: 11:04
+ * Time: 11:04.
  */
 
 namespace HughCube\Laravel\AlibabaCloud;
@@ -20,7 +20,7 @@ class ServiceProvider extends LaravelServiceProvider
     public function boot()
     {
         if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
-            $source = dirname(__DIR__) . '/config/config.php';
+            $source = dirname(__DIR__).'/config/config.php';
             $this->publishes([$source => config_path('alibabaCloud.php')]);
         }
 
@@ -34,9 +34,10 @@ class ServiceProvider extends LaravelServiceProvider
      */
     public function register()
     {
-        $this->app->singleton("alibabaCloud", function ($app) {
+        $this->app->singleton('alibabaCloud', function ($app) {
             /** @var LaravelApplication|LumenApplication $app */
             $config = $app->make('config')->get('alibabaCloud', []);
+
             return new Manager($config);
         });
     }
