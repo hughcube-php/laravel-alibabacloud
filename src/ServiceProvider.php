@@ -34,14 +34,10 @@ class ServiceProvider extends LaravelServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(
-            "alibabaCloud",
-            function ($app) {
-                /** @var LaravelApplication|LumenApplication $app */
-                $config = $app->make('config')->get('alibabaCloud', []);
-
-                return new Manager($config);
-            }
-        );
+        $this->app->singleton("alibabaCloud", function ($app) {
+            /** @var LaravelApplication|LumenApplication $app */
+            $config = $app->make('config')->get('alibabaCloud', []);
+            return new Manager($config);
+        });
     }
 }

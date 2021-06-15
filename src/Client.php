@@ -15,7 +15,7 @@ use Illuminate\Support\Arr;
 
 class Client
 {
-    private static $clientCount = 0;
+    private static $clientIndex = 0;
 
     /**
      * @var string Client对应的名称
@@ -42,23 +42,39 @@ class Client
     }
 
     /**
-     * 获取客户端名称
-     *
      * @return string
      */
-    public function getName(): string
+    public function getName()
     {
         if (empty($this->name)) {
-            $this->name = md5(serialize([__METHOD__, $this->config, microtime(), ++static::$clientCount]));
-            $this->client = AlibabaCloud::accessKeyClient($this->config["accessKey"], $this->config["accessKeySecret"]);
-
-            if (!empty($this->config["regionId"])) {
-                $this->client->regionId($this->config["regionId"]);
-            }
-            $this->client->name($this->name);
+            $this->client = $client = $this->createAlibabaCloudClient();
+            $client->name(($this->name = $this->randomName()));
         }
 
         return $this->name;
+    }
+
+    /**
+     * @return AccessKeyClient
+     * @throws \AlibabaCloud\Client\Exception\ClientException
+     */
+    protected function createAlibabaCloudClient()
+    {
+        $client = AlibabaCloud::accessKeyClient($this->getAccessKeyId(), $this->getAccessKeySecret());
+
+        $client->options($this->getOptions());
+        null !== ($regionId = $this->getRegionId()) and $client->regionId($regionId);
+
+        return $client;
+    }
+
+    /**
+     * @return string
+     */
+    protected function randomName()
+    {
+        $string = serialize([__METHOD__, $this->config, microtime(), ++self::$clientIndex, random_int(0, 9999999999)]);
+        return sprintf('%s-%s', md5($string), crc32($string));
     }
 
     /**
@@ -94,9 +110,9 @@ class Client
     /**
      * @return string
      */
-    public function getAccessKey()
+    public function getAccessKeyId()
     {
-        return Arr::get($this->config, "accessKey");
+        return Arr::get($this->config, 'AccessKeyID');
     }
 
     /**
@@ -104,7 +120,7 @@ class Client
      */
     public function getAccessKeySecret()
     {
-        return Arr::get($this->config, "accessKeySecret");
+        return Arr::get($this->config, 'AccessKeySecret');
     }
 
     /**
@@ -112,7 +128,7 @@ class Client
      */
     public function getRegionId()
     {
-        return Arr::get($this->config, "regionId");
+        return Arr::get($this->config, 'RegionId');
     }
 
     /**
@@ -120,20 +136,46 @@ class Client
      */
     public function getAccountId()
     {
-        return Arr::get($this->config, "accountId");
+        return Arr::get($this->config, 'AccountId');
     }
 
     /**
-     * 变更所在地区, 主要在账号密码不变更, 切换地区使用
+     * @return array
+     */
+    public function getOptions()
+    {
+        return Arr::get($this->config, 'Options', []);
+    }
+
+    /**
+     * @return static
+     */
+    public function with($config)
+    {
+        $class = static::class;
+
+        return new $class(array_merge($this->config, $config));
+    }
+
+    /**
+     * 变更所在地区
      *
      * @param string $regionId
      * @return static
      */
     public function withRegionId($regionId)
     {
-        $config = $this->config;
-        $config["regionId"] = $regionId;
+        return $this->with(['AccountId' => $regionId]);
+    }
 
-        return new static($config);
+    /**
+     * 变更Options
+     *
+     * @param array $options
+     * @return static
+     */
+    public function withOptions(array $options)
+    {
+        return $this->with(['Options' => $options]);
     }
 }

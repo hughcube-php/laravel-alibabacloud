@@ -8,7 +8,6 @@
 
 namespace HughCube\Laravel\AlibabaCloud;
 
-
 use Illuminate\Support\Arr;
 
 class Manager
@@ -46,13 +45,12 @@ class Manager
      */
     public function client($name = null)
     {
-        $name = null == $name ? $this->getDefaultClient() : $name;
-
-        if (isset($this->clients[$name])) {
-            return $this->clients[$name];
+        $name = empty($name) ? $this->getDefaultClient() : $name;
+        if (!isset($this->clients[$name])) {
+            $this->clients[$name] = $this->resolve($name);
         }
 
-        return $this->clients[$name] = $this->resolve($name);
+        return $this->clients[$name];
     }
 
     /**
@@ -71,7 +69,7 @@ class Manager
     /**
      * Make the AlibabaCloud client instance.
      *
-     * @param string $name
+     * @param array $config
      * @return Client
      */
     public function makeClient(array $config)
@@ -94,19 +92,17 @@ class Manager
         string $regionName = null,
         string $accountName = null
     ) {
-        $idName = empty($idName) ? AlibabaCloud::KEY_ID_ENV_NAME : $idName;
-        $secretName = empty($secretName) ? AlibabaCloud::KEY_SECRET_ENV_NAME : $secretName;
-        $regionName = empty($regionName) ? AlibabaCloud::REGION_ENV_NAME : $regionName;
-        $accountName = empty($accountName) ? AlibabaCloud::ACCOUNT_ENV_NAME : $accountName;
+        $idName = empty($idName) ? AlibabaCloud::ACCESS_KEY_ID_ENV_NAME : $idName;
+        $secretName = empty($secretName) ? AlibabaCloud::ACCESS_KEY_SECRET_ENV_NAME : $secretName;
+        $regionName = empty($regionName) ? AlibabaCloud::REGION_ID_ENV_NAME : $regionName;
+        $accountName = empty($accountName) ? AlibabaCloud::ACCOUNT_ID_ENV_NAME : $accountName;
 
-        return $this->makeClient(
-            [
-                "accessKey" => env($idName),
-                "accessKeySecret" => env($secretName),
-                "regionId" => env($regionName),
-                "accountId" => env($accountName),
-            ]
-        );
+        return $this->makeClient([
+            "AccessKeyID" => env($idName),
+            "AccessKeySecret" => env($secretName),
+            "RegionId" => env($regionName),
+            "AccountId" => env($accountName),
+        ]);
     }
 
     /**
