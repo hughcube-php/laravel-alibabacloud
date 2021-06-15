@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: hugh.li
  * Date: 2021/6/15
- * Time: 7:14 下午
+ * Time: 7:14 下午.
  */
 
 namespace HughCube\Laravel\AlibabaCloud\Tests;
@@ -33,11 +33,11 @@ class ClientTest extends TestCase
         }
 
         $this->assertClient(AlibabaCloud::makeClientFromEnv(), [
-            "AccessKeyID" => env(AlibabaCloud::ACCESS_KEY_ID_ENV_NAME),
-            "AccessKeySecret" => env(AlibabaCloud::ACCESS_KEY_SECRET_ENV_NAME),
-            "RegionId" => env(AlibabaCloud::REGION_ID_ENV_NAME),
-            "AccountId" => env(AlibabaCloud::ACCOUNT_ID_ENV_NAME),
-            "Options" => []
+            'AccessKeyID' => env(AlibabaCloud::ACCESS_KEY_ID_ENV_NAME),
+            'AccessKeySecret' => env(AlibabaCloud::ACCESS_KEY_SECRET_ENV_NAME),
+            'RegionId' => env(AlibabaCloud::REGION_ID_ENV_NAME),
+            'AccountId' => env(AlibabaCloud::ACCOUNT_ID_ENV_NAME),
+            'Options' => [],
         ]);
     }
 
