@@ -91,10 +91,10 @@ class Manager
         string $regionName = null,
         string $accountName = null
     ) {
-        $idName = empty($idName) ? AlibabaCloud::ACCESS_KEY_ID_ENV_NAME : $idName;
-        $secretName = empty($secretName) ? AlibabaCloud::ACCESS_KEY_SECRET_ENV_NAME : $secretName;
-        $regionName = empty($regionName) ? AlibabaCloud::REGION_ID_ENV_NAME : $regionName;
-        $accountName = empty($accountName) ? AlibabaCloud::ACCOUNT_ID_ENV_NAME : $accountName;
+        $idName = empty($idName) ? AlibabaCloud::KEY_ID_ENV_NAME : $idName;
+        $secretName = empty($secretName) ? AlibabaCloud::KEY_SECRET_ENV_NAME : $secretName;
+        $regionName = empty($regionName) ? AlibabaCloud::REGION_ENV_NAME : $regionName;
+        $accountName = empty($accountName) ? AlibabaCloud::ACCOUNT_ENV_NAME : $accountName;
 
         return $this->makeClient([
             'AccessKeyID' => env($idName),

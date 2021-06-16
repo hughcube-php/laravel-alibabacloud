@@ -19,10 +19,10 @@ use Illuminate\Support\Facades\Facade as IlluminateFacade;
  */
 class AlibabaCloud extends IlluminateFacade
 {
-    const ACCESS_KEY_ID_ENV_NAME = 'ALIYUN_ACCESS_KEY_ID';
-    const ACCESS_KEY_SECRET_ENV_NAME = 'ALIYUN_ACCESS_KEY_SECRET';
-    const REGION_ID_ENV_NAME = 'ALIYUN_REGION_ID';
-    const ACCOUNT_ID_ENV_NAME = 'ALIYUN_ACCOUNT_ID';
+    const KEY_ID_ENV_NAME = "ALIYUN_ACCESS_KEY";
+    const KEY_SECRET_ENV_NAME = "ALIYUN_ACCESS_KEY_SECRET";
+    const REGION_ENV_NAME = "ALIYUN_REGION";
+    const ACCOUNT_ENV_NAME = 'ALIYUN_ACCOUNT_ID';
 
     /**
      * @var AlibabaCloudSdk
@@ -44,7 +44,7 @@ class AlibabaCloud extends IlluminateFacade
      */
     public static function sdk()
     {
-        if (! static::$sdk instanceof AlibabaCloudSdk) {
+        if (!static::$sdk instanceof AlibabaCloudSdk) {
             static::$sdk = new AlibabaCloudSdk();
         }
 

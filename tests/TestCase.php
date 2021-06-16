@@ -48,10 +48,10 @@ class TestCase extends OrchestraTestCase
 
         foreach (
             [
-                AlibabaCloud::ACCESS_KEY_ID_ENV_NAME => md5(random_bytes(100)),
-                AlibabaCloud::ACCESS_KEY_SECRET_ENV_NAME => md5(random_bytes(100)),
-                AlibabaCloud::REGION_ID_ENV_NAME => md5(random_bytes(100)),
-                AlibabaCloud::ACCOUNT_ID_ENV_NAME => md5(random_bytes(100)),
+                AlibabaCloud::KEY_ID_ENV_NAME => md5(random_bytes(100)),
+                AlibabaCloud::KEY_SECRET_ENV_NAME => md5(random_bytes(100)),
+                AlibabaCloud::REGION_ENV_NAME => md5(random_bytes(100)),
+                AlibabaCloud::ACCOUNT_ENV_NAME => md5(random_bytes(100)),
             ] as $name => $value
         ) {
             putenv("$name=$value");

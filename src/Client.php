@@ -89,11 +89,16 @@ class Client
     }
 
     /**
-     * 把当前实例设置为默认实例.
+     * 把当前实例设置为默认实例
+     *
+     * @return $this
+     * @throws \AlibabaCloud\Client\Exception\ClientException
      */
     public function asDefault()
     {
         $this->client->asDefaultClient();
+
+        return $this;
     }
 
     /**
@@ -119,27 +124,59 @@ class Client
     }
 
     /**
-     * @return string
+     * @param null|string $key
+     * @param null|mixed $default
+     * @return array|\ArrayAccess|mixed
+     */
+    public function getConfig($key = null, $default = null)
+    {
+        if (null === $key) {
+            return $this->config;
+        }
+
+        return Arr::get($this->config, $key, $default);
+    }
+
+    /**
+     * @return string|null
      */
     public function getAccessKeyId()
     {
-        return Arr::get($this->config, 'AccessKeyID');
+        foreach (['AccessKeyID', 'accessKeyID', 'accessKey', 'AccessKey'] as $key) {
+            if (null != ($value = $this->getConfig($key))) {
+                return $value;
+            }
+        }
+
+        return null;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getAccessKeySecret()
     {
-        return Arr::get($this->config, 'AccessKeySecret');
+        foreach (['AccessKeySecret', 'accessKeySecret'] as $key) {
+            if (null != ($value = $this->getConfig($key))) {
+                return $value;
+            }
+        }
+
+        return null;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getRegionId()
     {
-        return Arr::get($this->config, 'RegionId');
+        foreach (['regionId', 'RegionId'] as $key) {
+            if (null != ($value = $this->getConfig($key))) {
+                return $value;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -147,7 +184,13 @@ class Client
      */
     public function getAccountId()
     {
-        return Arr::get($this->config, 'AccountId');
+        foreach (['AccountId', 'accountId'] as $key) {
+            if (null != ($value = $this->getConfig($key))) {
+                return $value;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -155,7 +198,13 @@ class Client
      */
     public function getOptions()
     {
-        return Arr::get($this->config, 'Options', []);
+        foreach (['Options', 'options'] as $key) {
+            if (null != ($value = $this->getConfig($key))) {
+                return $value;
+            }
+        }
+
+        return [];
     }
 
     /**
