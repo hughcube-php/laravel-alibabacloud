@@ -180,7 +180,7 @@ class Client
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getAccountId()
     {
