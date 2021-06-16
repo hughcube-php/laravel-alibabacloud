@@ -63,5 +63,11 @@ class ClientTest extends TestCase
 
         $client->asDefault();
         $this->assertSame(AliYunAlibabaCloud::getDefaultClient(), $client->getClient());
+
+        $regionId = md5(random_bytes(100));
+        $this->assertSame($client->withRegionId($regionId)->getRegionId(), $regionId);
+
+        $options = [md5(random_bytes(100))];
+        $this->assertSame($client->withOptions($options)->getOptions(), $options);
     }
 }

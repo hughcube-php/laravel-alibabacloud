@@ -226,7 +226,7 @@ class Client
      */
     public function withRegionId($regionId)
     {
-        return $this->with(['AccountId' => $regionId]);
+        return $this->with(['RegionId' => $regionId]);
     }
 
     /**
