@@ -38,7 +38,38 @@ class Client
      */
     public function __construct(array $config)
     {
-        $this->config = $config;
+        $this->config = $this->formatConfig($config);
+    }
+
+    /**
+     * @param array $config
+     * @return array
+     */
+    protected function formatConfig(array $config)
+    {
+        return [
+            'AccessKeyID' => $this->getOneValue(['AccessKeyID', 'accessKeyID', 'accessKey', 'AccessKey'], $config),
+            'AccessKeySecret' => $this->getOneValue(['AccessKeySecret', 'accessKeySecret'], $config),
+            'RegionId' => $this->getOneValue(['RegionId', 'regionId'], $config),
+            'AccountId' => $this->getOneValue(['AccountId', 'accountId'], $config),
+            'Options' => $this->getOneValue(['Options', 'options'], $config, []),
+        ];
+    }
+
+    /**
+     * @param array $keys
+     * @param array $array
+     * @return array|\ArrayAccess|mixed|null
+     */
+    protected function getOneValue($keys, $array, $default = null)
+    {
+        foreach ($keys as $key) {
+            if (Arr::has($array, $key)) {
+                return Arr::get($array, $key);
+            }
+        }
+
+        return $default;
     }
 
     /**
@@ -142,13 +173,7 @@ class Client
      */
     public function getAccessKeyId()
     {
-        foreach (['AccessKeyID', 'accessKeyID', 'accessKey', 'AccessKey'] as $key) {
-            if (null != ($value = $this->getConfig($key))) {
-                return $value;
-            }
-        }
-
-        return null;
+        return Arr::get($this->config, 'AccessKeyID');
     }
 
     /**
@@ -156,13 +181,7 @@ class Client
      */
     public function getAccessKeySecret()
     {
-        foreach (['AccessKeySecret', 'accessKeySecret'] as $key) {
-            if (null != ($value = $this->getConfig($key))) {
-                return $value;
-            }
-        }
-
-        return null;
+        return Arr::get($this->config, 'AccessKeySecret');
     }
 
     /**
@@ -170,13 +189,7 @@ class Client
      */
     public function getRegionId()
     {
-        foreach (['regionId', 'RegionId'] as $key) {
-            if (null != ($value = $this->getConfig($key))) {
-                return $value;
-            }
-        }
-
-        return null;
+        return Arr::get($this->config, 'RegionId');
     }
 
     /**
@@ -184,13 +197,7 @@ class Client
      */
     public function getAccountId()
     {
-        foreach (['AccountId', 'accountId'] as $key) {
-            if (null != ($value = $this->getConfig($key))) {
-                return $value;
-            }
-        }
-
-        return null;
+        return Arr::get($this->config, 'AccountId');
     }
 
     /**
@@ -198,13 +205,7 @@ class Client
      */
     public function getOptions()
     {
-        foreach (['Options', 'options'] as $key) {
-            if (null != ($value = $this->getConfig($key))) {
-                return $value;
-            }
-        }
-
-        return [];
+        return Arr::get($this->config, 'Options', []);
     }
 
     /**
