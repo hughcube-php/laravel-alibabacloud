@@ -89,7 +89,7 @@ class Client
     }
 
     /**
-     * 把当前实例设置为默认实例
+     * 把当前实例设置为默认实例.
      *
      * @return $this
      * @throws \AlibabaCloud\Client\Exception\ClientException
