@@ -11,7 +11,6 @@ namespace HughCube\Laravel\AlibabaCloud;
 use Illuminate\Container\Container as IlluminateContainer;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Container\Container as ContainerContract;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Manager as IlluminateManager;
 use InvalidArgumentException;
 
@@ -125,7 +124,7 @@ class Manager extends IlluminateManager
      */
     public function getDefaultClient(): string
     {
-        return Arr::get($this->config, 'default', 'default');
+        return $this->getConfig()->get('default', 'default');
     }
 
     /**
