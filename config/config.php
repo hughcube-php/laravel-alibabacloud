@@ -9,7 +9,7 @@ return [
             'RegionId' => '************',
             'AccountId' => '************',
             'Options' => [
-            /** http Options */
+                /** http Options */
             ],
         ],
     ],

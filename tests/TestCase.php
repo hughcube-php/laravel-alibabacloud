@@ -18,7 +18,7 @@ class TestCase extends OrchestraTestCase
     /**
      * @inheritDoc
      */
-    protected function getApplicationProviders($app)
+    protected function getApplicationProviders($app): array
     {
         $providers = parent::getApplicationProviders($app);
 
@@ -30,7 +30,7 @@ class TestCase extends OrchestraTestCase
     /**
      * @inheritDoc
      */
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [
             ServiceProvider::class,
@@ -45,16 +45,5 @@ class TestCase extends OrchestraTestCase
         parent::getEnvironmentSetUp($app);
 
         $app['config']->set('alibabaCloud', (require __DIR__.'/config//alibabaCloud.php'));
-
-        foreach (
-            [
-                AlibabaCloud::KEY_ID_ENV_NAME => md5(random_bytes(100)),
-                AlibabaCloud::KEY_SECRET_ENV_NAME => md5(random_bytes(100)),
-                AlibabaCloud::REGION_ENV_NAME => md5(random_bytes(100)),
-                AlibabaCloud::ACCOUNT_ENV_NAME => md5(random_bytes(100)),
-            ] as $name => $value
-        ) {
-            putenv("$name=$value");
-        }
     }
 }

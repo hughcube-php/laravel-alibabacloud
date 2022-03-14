@@ -10,22 +10,29 @@ namespace HughCube\Laravel\AlibabaCloud;
 
 use AlibabaCloud\Client\AlibabaCloud;
 use AlibabaCloud\Client\Clients\AccessKeyClient;
+use AlibabaCloud\Client\Exception\ClientException;
+use AlibabaCloud\Client\Exception\ServerException;
 use AlibabaCloud\Client\Resolver\Rpc as AlibabaCloudRpc;
+use AlibabaCloud\Client\Result\Result;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
+/**
+ * @mixin AccessKeyClient
+ */
 class Client
 {
     private static $clientIndex = 0;
 
     /**
-     * @var string Client对应的名称
-     */
-    protected $name;
-
-    /**
      * @var AccessKeyClient
      */
     protected $client;
+
+    /**
+     * @var string
+     */
+    protected $name;
 
     /**
      * @var array 阿里云的配置
@@ -34,77 +41,51 @@ class Client
 
     /**
      * Client constructor.
-     * @param array $config
+     * @param  array  $config
      */
     public function __construct(array $config)
     {
-        $this->config = $this->formatConfig($config);
-    }
-
-    /**
-     * @param array $config
-     * @return array
-     */
-    protected function formatConfig(array $config)
-    {
-        return [
-            'AccessKeyID' => $this->getOneValue(['AccessKeyID', 'accessKeyID', 'accessKey', 'AccessKey'], $config),
-            'AccessKeySecret' => $this->getOneValue(['AccessKeySecret', 'accessKeySecret'], $config),
-            'RegionId' => $this->getOneValue(['RegionId', 'regionId'], $config),
-            'AccountId' => $this->getOneValue(['AccountId', 'accountId'], $config),
-            'Options' => $this->getOneValue(['Options', 'options'], $config, []),
-        ];
-    }
-
-    /**
-     * @param array $keys
-     * @param array $array
-     * @return array|\ArrayAccess|mixed|null
-     */
-    protected function getOneValue($keys, $array, $default = null)
-    {
-        foreach ($keys as $key) {
-            if (Arr::has($array, $key)) {
-                return Arr::get($array, $key);
-            }
-        }
-
-        return $default;
+        $this->config = $config;
     }
 
     /**
      * @return string
+     * @throws ClientException
+     * @throws ClientException
      */
-    public function getName()
+    public function getName(): string
     {
         if (empty($this->name)) {
-            $this->client = $client = $this->createAlibabaCloudClient();
-            $client->name(($this->name = $this->randomName()));
+            $this->getClient()->name($this->name = $this->genClientName());
         }
-
         return $this->name;
     }
 
     /**
      * @return AccessKeyClient
+     * @throws ClientException
      */
-    public function getClient()
+    public function getClient(): AccessKeyClient
     {
-        $this->getName();
-
+        if (!$this->client instanceof AccessKeyClient) {
+            $this->client = $this->createClient($this->config);
+        }
         return $this->client;
     }
 
     /**
+     * @param  array  $config
      * @return AccessKeyClient
-     * @throws \AlibabaCloud\Client\Exception\ClientException
+     * @throws ClientException
      */
-    protected function createAlibabaCloudClient()
+    protected function createClient(array $config): AccessKeyClient
     {
-        $client = AlibabaCloud::accessKeyClient($this->getAccessKeyId(), $this->getAccessKeySecret());
+        $client = AlibabaCloud::accessKeyClient($config['AccessKeyID'], $config['AccessKeySecret']);
+        $client->options($config['Options'] ?? []);
 
-        $client->options($this->getOptions());
-        null !== ($regionId = $this->getRegionId()) and $client->regionId($regionId);
+        if (!empty($config['RegionId'])) {
+            $client = $client->regionId($config['RegionId']);
+        }
 
         return $client;
     }
@@ -112,31 +93,18 @@ class Client
     /**
      * @return string
      */
-    protected function randomName()
+    protected function genClientName(): string
     {
-        $string = serialize([__METHOD__, $this->config, microtime(), ++self::$clientIndex, random_int(0, 9999999999)]);
-
+        $string = serialize([++self::$clientIndex, Str::random(), __METHOD__]);
         return sprintf('%s-%s', md5($string), crc32($string));
     }
 
     /**
-     * 把当前实例设置为默认实例.
+     * 给request添加上client
      *
-     * @return $this
-     * @throws \AlibabaCloud\Client\Exception\ClientException
-     */
-    public function asDefault()
-    {
-        $this->client->asDefaultClient();
-
-        return $this;
-    }
-
-    /**
-     * 给request添加上client.
-     *
-     * @param AlibabaCloudRpc $request
+     * @param  AlibabaCloudRpc  $request
      * @return AlibabaCloudRpc
+     * @throws ClientException
      */
     public function withClient(AlibabaCloudRpc $request)
     {
@@ -146,25 +114,23 @@ class Client
     /**
      * 发送请求
      *
-     * @param AlibabaCloudRpc $request
-     * @return \AlibabaCloud\Client\Result\Result
+     * @param  AlibabaCloudRpc  $request
+     * @return Result
+     * @throws ClientException
+     * @throws ServerException
      */
-    public function request(AlibabaCloudRpc $request)
+    public function request(AlibabaCloudRpc $request): Result
     {
         return $this->withClient($request)->request();
     }
 
     /**
-     * @param null|string $key
-     * @param null|mixed $default
-     * @return array|\ArrayAccess|mixed
+     * @param  null|string|integer  $key
+     * @param  null|mixed  $default
+     * @return mixed
      */
     public function getConfig($key = null, $default = null)
     {
-        if (null === $key) {
-            return $this->config;
-        }
-
         return Arr::get($this->config, $key, $default);
     }
 
@@ -173,7 +139,7 @@ class Client
      */
     public function getAccessKeyId()
     {
-        return Arr::get($this->config, 'AccessKeyID');
+        return Arr::get($this->getConfig(), 'AccessKeyID');
     }
 
     /**
@@ -181,7 +147,7 @@ class Client
      */
     public function getAccessKeySecret()
     {
-        return Arr::get($this->config, 'AccessKeySecret');
+        return Arr::get($this->getConfig(), 'AccessKeySecret');
     }
 
     /**
@@ -189,7 +155,7 @@ class Client
      */
     public function getRegionId()
     {
-        return Arr::get($this->config, 'RegionId');
+        return Arr::get($this->getConfig(), 'RegionId');
     }
 
     /**
@@ -197,34 +163,33 @@ class Client
      */
     public function getAccountId()
     {
-        return Arr::get($this->config, 'AccountId');
+        return Arr::get($this->getConfig(), 'AccountId');
     }
 
     /**
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
-        return Arr::get($this->config, 'Options', []);
+        return Arr::get($this->getConfig(), 'Options', []);
     }
 
     /**
      * @return static
      */
-    public function with($config)
+    public function with($config): Client
     {
         $class = static::class;
-
-        return new $class(array_merge($this->config, $config));
+        return new $class(array_merge($this->getConfig(), $config));
     }
 
     /**
      * 变更所在地区.
      *
-     * @param string $regionId
+     * @param  string  $regionId
      * @return static
      */
-    public function withRegionId($regionId)
+    public function withRegionId(string $regionId): Client
     {
         return $this->with(['RegionId' => $regionId]);
     }
@@ -232,11 +197,22 @@ class Client
     /**
      * 变更Options.
      *
-     * @param array $options
+     * @param  array  $options
      * @return static
      */
-    public function withOptions(array $options)
+    public function withOptions(array $options): Client
     {
         return $this->with(['Options' => $options]);
+    }
+
+    /**
+     * @param  string  $name
+     * @param  array  $arguments
+     * @return mixed
+     * @throws ClientException
+     */
+    public function __call(string $name, array $arguments = [])
+    {
+        return $this->getClient()->$name(...$arguments);
     }
 }

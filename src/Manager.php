@@ -8,100 +8,106 @@
 
 namespace HughCube\Laravel\AlibabaCloud;
 
+use Illuminate\Container\Container as IlluminateContainer;
+use Illuminate\Contracts\Config\Repository;
+use Illuminate\Contracts\Container\Container as ContainerContract;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Manager as IlluminateManager;
+use InvalidArgumentException;
 
-class Manager
+/**
+ * @property callable|ContainerContract|null $container
+ */
+class Manager extends IlluminateManager
 {
     /**
-     * The AlibabaCloud server configurations.
-     *
-     * @var array
+     * @param  callable|ContainerContract|null  $container
      */
-    protected $config;
-
-    /**
-     * The clients.
-     *
-     * @var Client[]
-     */
-    protected $clients = [];
-
-    /**
-     * Manager constructor.
-     *
-     * @param array $config
-     */
-    public function __construct(array $config)
+    public function __construct($container = null)
     {
-        $this->config = $config;
+        $this->container = $container;
     }
+
+    /**
+     * @return IlluminateContainer
+     */
+    public function getContainer(): ContainerContract
+    {
+        if (is_callable($this->container)) {
+            $this->container = call_user_func($this->container);
+        } elseif (null === $this->container) {
+            $this->container = IlluminateContainer::getInstance();
+        }
+        return $this->container;
+    }
+
+    /**
+     * @return Repository
+     * @throws
+     * @phpstan-ignore-next-line
+     */
+    protected function getConfig(): Repository
+    {
+        if (!$this->config instanceof Repository) {
+            $this->config = $this->getContainer()->make('config');
+        }
+
+        return $this->config;
+    }
+
+    /**
+     * @param  null|string|integer  $name
+     * @param  mixed  $default
+     * @return array|mixed
+     */
+    protected function getPackageConfig($name = null, $default = null)
+    {
+        $key = sprintf("%s.%s", AlibabaCloud::getFacadeAccessor(), $name);
+        return $this->getConfig()->get($key, $default);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getClientDefaultConfig(): array
+    {
+        return $this->getConfig()->get("defaults", []);
+    }
+
 
     /**
      * Get a client by name.
      *
-     * @param string|null $name
-     *
+     * @param  string|null  $name
      * @return Client
      */
-    public function client($name = null)
+    public function client(?string $name = null): Client
     {
-        $name = empty($name) ? $this->getDefaultClient() : $name;
-        if (! isset($this->clients[$name])) {
-            $this->clients[$name] = $this->resolve($name);
-        }
-
-        return $this->clients[$name];
+        return $this->driver($name);
     }
 
     /**
-     * Resolve the given client by name.
-     *
-     * @param string|null $name
-     *
-     * @return Client
+     * @inheritdoc
      */
-    protected function resolve($name = null)
+    protected function createDriver($driver)
     {
-        return $this->makeClient($this->configuration($name));
+        return $this->makeClient($this->configuration($driver));
     }
 
     /**
      * Make the AlibabaCloud client instance.
      *
-     * @param array $config
+     * @param  array  $config
      * @return Client
      */
-    public function makeClient(array $config)
+    public function makeClient(array $config): Client
     {
         return new Client($config);
     }
 
-    /**
-     * Make the AlibabaCloud client instance from env.
-     *
-     * @param string|null $idName
-     * @param string|null $secretName
-     * @param string|null $regionName
-     * @param string|null $accountName
-     * @return Client
-     */
-    public function makeClientFromEnv(
-        string $idName = null,
-        string $secretName = null,
-        string $regionName = null,
-        string $accountName = null
-    ) {
-        $idName = empty($idName) ? AlibabaCloud::KEY_ID_ENV_NAME : $idName;
-        $secretName = empty($secretName) ? AlibabaCloud::KEY_SECRET_ENV_NAME : $secretName;
-        $regionName = empty($regionName) ? AlibabaCloud::REGION_ENV_NAME : $regionName;
-        $accountName = empty($accountName) ? AlibabaCloud::ACCOUNT_ENV_NAME : $accountName;
-
-        return $this->makeClient([
-            'AccessKeyID' => env($idName),
-            'AccessKeySecret' => env($secretName),
-            'RegionId' => env($regionName),
-            'AccountId' => env($accountName),
-        ]);
+    public function getDefaultDriver(): string
+    {
+        return $this->getDefaultClient();
     }
 
     /**
@@ -109,7 +115,7 @@ class Manager
      *
      * @return string
      */
-    public function getDefaultClient()
+    public function getDefaultClient(): string
     {
         return Arr::get($this->config, 'default', 'default');
     }
@@ -117,20 +123,20 @@ class Manager
     /**
      * Get the configuration for a client.
      *
-     * @param string $name
+     * @param  string  $name
      * @return array
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
-    protected function configuration($name)
+    protected function configuration(string $name): array
     {
-        $name = $name ?: $this->getDefaultClient();
-        $clients = Arr::get($this->config, 'clients');
+        $name = $name ?: $this->getDefaultDriver();
+        $config = $this->getPackageConfig("clients.$name");
 
-        if (is_null($config = Arr::get($clients, $name))) {
-            throw new \InvalidArgumentException("AlibabaCloud client [{$name}] not configured.");
+        if (null === $config) {
+            throw new InvalidArgumentException("AlibabaCloud client [{$name}] not configured.");
         }
 
-        return $config;
+        return array_merge($this->getClientDefaultConfig(), $config);
     }
 }
