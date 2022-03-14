@@ -38,17 +38,19 @@ class Manager extends IlluminateManager
         } elseif (null === $this->container) {
             $this->container = IlluminateContainer::getInstance();
         }
+
         return $this->container;
     }
 
     /**
      * @return Repository
+     *
      * @throws
      * @phpstan-ignore-next-line
      */
     protected function getConfig(): Repository
     {
-        if (!$this->config instanceof Repository) {
+        if (! $this->config instanceof Repository) {
             $this->config = $this->getContainer()->make('config');
         }
 
@@ -56,13 +58,14 @@ class Manager extends IlluminateManager
     }
 
     /**
-     * @param  null|string|integer  $name
+     * @param  null|string|int  $name
      * @param  mixed  $default
      * @return array|mixed
      */
     protected function getPackageConfig($name = null, $default = null)
     {
-        $key = sprintf("%s.%s", AlibabaCloud::getFacadeAccessor(), $name);
+        $key = sprintf('%s.%s', AlibabaCloud::getFacadeAccessor(), $name);
+
         return $this->getConfig()->get($key, $default);
     }
 
@@ -71,9 +74,8 @@ class Manager extends IlluminateManager
      */
     protected function getClientDefaultConfig(): array
     {
-        return $this->getConfig()->get("defaults", []);
+        return $this->getConfig()->get('defaults', []);
     }
-
 
     /**
      * Get a client by name.

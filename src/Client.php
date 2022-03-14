@@ -41,6 +41,7 @@ class Client
 
     /**
      * Client constructor.
+     *
      * @param  array  $config
      */
     public function __construct(array $config)
@@ -50,6 +51,7 @@ class Client
 
     /**
      * @return string
+     *
      * @throws ClientException
      * @throws ClientException
      */
@@ -58,24 +60,28 @@ class Client
         if (empty($this->name)) {
             $this->getClient()->name($this->name = $this->genClientName());
         }
+
         return $this->name;
     }
 
     /**
      * @return AccessKeyClient
+     *
      * @throws ClientException
      */
     public function getClient(): AccessKeyClient
     {
-        if (!$this->client instanceof AccessKeyClient) {
+        if (! $this->client instanceof AccessKeyClient) {
             $this->client = $this->createClient($this->config);
         }
+
         return $this->client;
     }
 
     /**
      * @param  array  $config
      * @return AccessKeyClient
+     *
      * @throws ClientException
      */
     protected function createClient(array $config): AccessKeyClient
@@ -83,7 +89,7 @@ class Client
         $client = AlibabaCloud::accessKeyClient($config['AccessKeyID'], $config['AccessKeySecret']);
         $client->options($config['Options'] ?? []);
 
-        if (!empty($config['RegionId'])) {
+        if (! empty($config['RegionId'])) {
             $client = $client->regionId($config['RegionId']);
         }
 
@@ -96,14 +102,16 @@ class Client
     protected function genClientName(): string
     {
         $string = serialize([++self::$clientIndex, Str::random(), __METHOD__]);
+
         return sprintf('%s-%s', md5($string), crc32($string));
     }
 
     /**
-     * 给request添加上client
+     * 给request添加上client.
      *
      * @param  AlibabaCloudRpc  $request
      * @return AlibabaCloudRpc
+     *
      * @throws ClientException
      */
     public function withClient(AlibabaCloudRpc $request)
@@ -116,6 +124,7 @@ class Client
      *
      * @param  AlibabaCloudRpc  $request
      * @return Result
+     *
      * @throws ClientException
      * @throws ServerException
      */
@@ -125,7 +134,7 @@ class Client
     }
 
     /**
-     * @param  null|string|integer  $key
+     * @param  null|string|int  $key
      * @param  null|mixed  $default
      * @return mixed
      */
@@ -180,6 +189,7 @@ class Client
     public function with($config): Client
     {
         $class = static::class;
+
         return new $class(array_merge($this->getConfig(), $config));
     }
 
@@ -209,6 +219,7 @@ class Client
      * @param  string  $name
      * @param  array  $arguments
      * @return mixed
+     *
      * @throws ClientException
      */
     public function __call(string $name, array $arguments = [])

@@ -24,6 +24,7 @@ class ClientTest extends TestCase
 
     /**
      * @return void
+     *
      * @throws ClientException
      */
     public function testClient()
