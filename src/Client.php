@@ -71,7 +71,7 @@ class Client
      */
     public function getClient(): AccessKeyClient
     {
-        if (! $this->client instanceof AccessKeyClient) {
+        if (!$this->client instanceof AccessKeyClient) {
             $this->client = $this->createClient($this->config);
         }
 
@@ -89,7 +89,7 @@ class Client
         $client = AlibabaCloud::accessKeyClient($config['AccessKeyID'], $config['AccessKeySecret']);
         $client->options($config['Options'] ?? []);
 
-        if (! empty($config['RegionId'])) {
+        if (!empty($config['RegionId'])) {
             $client = $client->regionId($config['RegionId']);
         }
 
@@ -114,7 +114,7 @@ class Client
      *
      * @throws ClientException
      */
-    public function withClient(AlibabaCloudRpc $request)
+    public function withClient(AlibabaCloudRpc $request): AlibabaCloudRpc
     {
         return $request->client($this->getName());
     }

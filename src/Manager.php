@@ -80,10 +80,10 @@ class Manager extends IlluminateManager
     /**
      * Get a client by name.
      *
-     * @param  string|null  $name
+     * @param  string|null|integer  $name
      * @return Client
      */
-    public function client(?string $name = null): Client
+    public function client($name = null): Client
     {
         return $this->driver($name);
     }
