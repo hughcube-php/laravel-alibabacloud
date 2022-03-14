@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Facade as IlluminateFacade;
 
 /**
  * Class AlibabaCloud.
+ *
  * @method static Client client(string $name = null)
  * @method static Client makeClient(array $config)
  */
@@ -38,9 +39,10 @@ class AlibabaCloud extends IlluminateFacade
      */
     public static function sdk(): AlibabaCloudSdk
     {
-        if (!static::$sdk instanceof AlibabaCloudSdk) {
+        if (! static::$sdk instanceof AlibabaCloudSdk) {
             static::$sdk = new AlibabaCloudSdk();
         }
+
         return static::$sdk;
     }
 }

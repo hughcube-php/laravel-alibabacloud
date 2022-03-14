@@ -11,7 +11,7 @@ return [
             'RegionId' => md5(Str::random(100)),
             'AccountId' => md5(Str::random(100)),
             'Options' => [
-                /** http Options */
+            /** http Options */
             ],
         ],
         'default2' => [
@@ -20,8 +20,8 @@ return [
             'RegionId' => md5(Str::random(100)),
             'AccountId' => md5(Str::random(100)),
             'Options' => [
-                /** http Options */
+            /** http Options */
             ],
-        ]
+        ],
     ],
 ];

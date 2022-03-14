@@ -8,7 +8,6 @@
 
 namespace HughCube\Laravel\AlibabaCloud\Tests;
 
-use HughCube\Laravel\AlibabaCloud\AlibabaCloud;
 use HughCube\Laravel\AlibabaCloud\ServiceProvider;
 use Illuminate\Auth\Passwords\PasswordResetServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
