@@ -33,10 +33,12 @@ class Manager extends IlluminateManager
      */
     public function getContainer(): ContainerContract
     {
+        if (!property_exists($this, 'container') || null === $this->container) {
+            return IlluminateContainer::getInstance();
+        }
+
         if (is_callable($this->container)) {
             $this->container = call_user_func($this->container);
-        } elseif (null === $this->container) {
-            $this->container = IlluminateContainer::getInstance();
         }
 
         return $this->container;
@@ -50,8 +52,12 @@ class Manager extends IlluminateManager
      */
     protected function getConfig(): Repository
     {
-        if (! $this->config instanceof Repository) {
-            $this->config = $this->getContainer()->make('config');
+        if (!property_exists($this, 'config') || null === $this->config) {
+            return $this->getContainer()->make('config');
+        }
+
+        if (is_callable($this->config)) {
+            $this->config = call_user_func($this->config);
         }
 
         return $this->config;
