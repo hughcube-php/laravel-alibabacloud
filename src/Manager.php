@@ -124,7 +124,7 @@ class Manager extends IlluminateManager
      */
     public function getDefaultClient(): string
     {
-        return $this->getConfig()->get('default', 'default');
+        return $this->getPackageConfig('default', 'default');
     }
 
     /**
