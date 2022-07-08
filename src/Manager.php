@@ -28,7 +28,7 @@ class Manager extends IlluminateManager
     }
 
     /**
-     * @return IlluminateContainer
+     * @return ContainerContract
      */
     public function getContainer(): ContainerContract
     {

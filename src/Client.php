@@ -12,7 +12,7 @@ use AlibabaCloud\Client\AlibabaCloud;
 use AlibabaCloud\Client\Clients\AccessKeyClient;
 use AlibabaCloud\Client\Exception\ClientException;
 use AlibabaCloud\Client\Exception\ServerException;
-use AlibabaCloud\Client\Resolver\Rpc as AlibabaCloudRpc;
+use AlibabaCloud\Client\Request\Request;
 use AlibabaCloud\Client\Result\Result;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -109,12 +109,12 @@ class Client
     /**
      * 给request添加上client.
      *
-     * @param  AlibabaCloudRpc  $request
-     * @return AlibabaCloudRpc
+     * @param  Request  $request
+     * @return Request
      *
      * @throws ClientException
      */
-    public function withClient(AlibabaCloudRpc $request): AlibabaCloudRpc
+    public function withClient(Request $request): Request
     {
         return $request->client($this->getName());
     }
@@ -122,13 +122,13 @@ class Client
     /**
      * 发送请求
      *
-     * @param  AlibabaCloudRpc  $request
+     * @param  Request  $request
      * @return Result
      *
      * @throws ClientException
      * @throws ServerException
      */
-    public function request(AlibabaCloudRpc $request): Result
+    public function request(Request $request): Result
     {
         return $this->withClient($request)->request();
     }
