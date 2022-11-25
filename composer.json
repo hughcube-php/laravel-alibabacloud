@@ -15,8 +15,8 @@
     ],
     "require": {
         "php": ">=7.0",
-        "illuminate/support": "*",
-        "alibabacloud/sdk": "^1.0"
+        "alibabacloud/sdk": "^1.0",
+        "hughcube/laravel-service-support": "^1.0"
     },
     "require-dev": {
         "laravel/lumen-framework": "*",
@@ -34,13 +34,7 @@
             "HughCube\\Laravel\\AlibabaCloud\\Tests\\": "tests"
         }
     },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "HughCube\\Laravel\\AlibabaCloud\\ServiceProvider"
-            ]
-        }
-    },
+    "extra": {},
     "scripts": {
         "test": "phpunit --verbose --coverage-clover=coverage.clover",
         "phpstan": "phpstan analyse -vvv",
