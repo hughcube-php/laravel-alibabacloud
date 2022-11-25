@@ -8,15 +8,34 @@
 
 namespace HughCube\Laravel\AlibabaCloud;
 
-class ServiceProvider extends \HughCube\Laravel\ServiceSupport\ServiceProvider
+use Illuminate\Foundation\Application as LaravelApplication;
+use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
+use Laravel\Lumen\Application as LumenApplication;
+
+class ServiceProvider extends LaravelServiceProvider
 {
-    protected function getPackageFacadeAccessor(): string
+    /**
+     * Boot the provider.
+     */
+    public function boot()
     {
-        return 'alibabaCloud';
+        if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
+            $source = dirname(__DIR__).'/config/config.php';
+            $this->publishes([$source => config_path('alibabaCloud.php')]);
+        }
+
+        if ($this->app instanceof LumenApplication) {
+            $this->app->configure('alibabaCloud');
+        }
     }
 
-    protected function createPackageFacadeRoot($app): Manager
+    /**
+     * Register the provider.
+     */
+    public function register()
     {
-        return new Manager();
+        $this->app->singleton(AlibabaCloud::getFacadeAccessor(), function ($app) {
+            return new Manager();
+        });
     }
 }

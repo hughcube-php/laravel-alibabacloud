@@ -9,7 +9,7 @@
 namespace HughCube\Laravel\AlibabaCloud;
 
 use AlibabaCloud\Client\AlibabaCloud as AlibabaCloudSdk;
-use Illuminate\Support\Facades\Facade as IlluminateFacade;
+use HughCube\Laravel\ServiceSupport\LazyFacade;
 
 /**
  * Class AlibabaCloud.
@@ -17,12 +17,24 @@ use Illuminate\Support\Facades\Facade as IlluminateFacade;
  * @method static Client client(string $name = null)
  * @method static Client makeClient(array $config)
  */
-class AlibabaCloud extends IlluminateFacade
+class AlibabaCloud extends LazyFacade
 {
     /**
      * @var AlibabaCloudSdk
      */
     protected static $sdk;
+
+    /**
+     * @return AlibabaCloudSdk
+     */
+    public static function sdk(): AlibabaCloudSdk
+    {
+        if (!static::$sdk instanceof AlibabaCloudSdk) {
+            static::$sdk = new AlibabaCloudSdk();
+        }
+
+        return static::$sdk;
+    }
 
     /**
      * Get the registered name of the component.
@@ -34,15 +46,8 @@ class AlibabaCloud extends IlluminateFacade
         return 'alibabaCloud';
     }
 
-    /**
-     * @return AlibabaCloudSdk
-     */
-    public static function sdk(): AlibabaCloudSdk
+    protected static function registerServiceProvider($app)
     {
-        if (! static::$sdk instanceof AlibabaCloudSdk) {
-            static::$sdk = new AlibabaCloudSdk();
-        }
-
-        return static::$sdk;
+        $app->register(ServiceProvider::class);
     }
 }
