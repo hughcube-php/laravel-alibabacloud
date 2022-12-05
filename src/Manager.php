@@ -32,7 +32,7 @@ class Manager extends IlluminateManager
      */
     public function getContainer(): ContainerContract
     {
-        if (!property_exists($this, 'container') || null === $this->container) {
+        if (! property_exists($this, 'container') || null === $this->container) {
             return IlluminateContainer::getInstance();
         }
 
@@ -51,7 +51,7 @@ class Manager extends IlluminateManager
      */
     protected function getConfig(): Repository
     {
-        if (!property_exists($this, 'config') || null === $this->config) {
+        if (! property_exists($this, 'config') || null === $this->config) {
             return $this->getContainer()->make('config');
         }
 
@@ -85,7 +85,7 @@ class Manager extends IlluminateManager
     /**
      * Get a client by name.
      *
-     * @param  string|null|integer  $name
+     * @param  string|null|int  $name
      * @return Client
      */
     public function client($name = null): Client

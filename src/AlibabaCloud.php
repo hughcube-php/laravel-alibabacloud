@@ -29,7 +29,7 @@ class AlibabaCloud extends LazyFacade
      */
     public static function sdk(): AlibabaCloudSdk
     {
-        if (!static::$sdk instanceof AlibabaCloudSdk) {
+        if (! static::$sdk instanceof AlibabaCloudSdk) {
             static::$sdk = new AlibabaCloudSdk();
         }
 
